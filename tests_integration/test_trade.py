@@ -189,6 +189,25 @@ def test_get_order_list(kucoinf_real):
     """
 
 
+def test_get_open_order_details(kucoinf_real):
+    open_order_details = kucoinf_real.trade.client.get_open_order_details("XBTUSDTM")
+    logger.info(f"open_order_details:\n{json.dumps(open_order_details, indent=4)}")
+    """
+    {
+        "openOrderBuySize": 0,
+        "openOrderSellSize": 2,
+        "openOrderBuyCost": "0",
+        "openOrderSellCost": "143.9672",
+        "settleCurrency": "USDT"
+    }
+    """
+
+
+def test_get_open_stop_orders(kucoinf_real):
+    stop_orders = kucoinf_real.trade.client.get_open_stop_order()
+    logger.info(f"stop_orders:\n{json.dumps(stop_orders, indent=4)}")
+
+
 def test_cancel_order(kucoinf_real):
     order_id = "165492008100589568"
     order_list = kucoinf_real.trade.client.cancel_order(orderId=order_id)
