@@ -54,7 +54,7 @@ class KucoinFutures:
             leverage=leverage,
         )
 
-        await self.websocket.listen_for_fill(order_id=entry_order_id)
+        await self.trade.poll_for_fill(order_id=entry_order_id)
 
         order_ids = self.trade.create_stop_loss_and_take_profit(
             instrument=instrument,
