@@ -300,7 +300,6 @@ class KucoinFuturesTrade:
                     if isinstance(fill, dict) and fill.get("orderId", "") == order_id:
                         logger.info("Order %s has been filled.", order_id)
                         return fill
-                logger.info("Order %s has not been filled yet.", order_id)
             else:
                 logger.warning("Unexpected recent fills response: %s", recent_fills)
             attempt += 1
