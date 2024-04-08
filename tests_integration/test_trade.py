@@ -1,7 +1,101 @@
 import json
 import logging
 
+
 logger = logging.getLogger(__name__)
+
+
+def test_get_position_list(kucoinf_real):
+    pos_list = kucoinf_real.trade.client.get_all_position()
+    logger.info(f"pos_list:\n{json.dumps(pos_list, indent=4)}")
+    """
+    [
+        {
+            "id": "300000000000739530",
+            "symbol": "XBTUSDTM",
+            "autoDeposit": false,
+            "maintMarginReq": 0.004,
+            "riskLimit": 100000,
+            "realLeverage": 2.0,
+            "crossMode": false,
+            "delevPercentage": 0.11,
+            "openingTimestamp": 1712601927281,
+            "currentTimestamp": 1712602528548,
+            "currentQty": 1,
+            "currentCost": 72.0278,
+            "currentComm": 0.04321668,
+            "unrealisedCost": 72.0278,
+            "realisedGrossCost": 0.0,
+            "realisedCost": 0.04321668,
+            "isOpen": true,
+            "markPrice": 71850.62,
+            "markValue": 71.85062,
+            "posCost": 72.0278,
+            "posCross": 0,
+            "posCrossMargin": 0.0,
+            "posInit": 36.0139,
+            "posComm": 0.06482502,
+            "posCommCommon": 0.06482502,
+            "posLoss": 0.0,
+            "posMargin": 36.07872502,
+            "posMaint": 0.3692145,
+            "maintMargin": 35.90154502,
+            "realisedGrossPnl": 0.0,
+            "realisedPnl": -0.04321668,
+            "unrealisedPnl": -0.17718,
+            "unrealisedPnlPcnt": -0.0025,
+            "unrealisedRoePcnt": -0.0049,
+            "avgEntryPrice": 72027.8,
+            "liquidationPrice": 36318.3,
+            "bankruptPrice": 36013.9,
+            "settleCurrency": "USDT",
+            "isInverse": false,
+            "maintainMargin": 0.004
+        },
+        {
+            "id": "300000000000908252",
+            "symbol": "SOLUSDTM",
+            "autoDeposit": false,
+            "maintMarginReq": 0.007,
+            "riskLimit": 50000,
+            "realLeverage": 1.99,
+            "crossMode": false,
+            "delevPercentage": 0.59,
+            "openingTimestamp": 1712597669921,
+            "currentTimestamp": 1712602528548,
+            "currentQty": -1,
+            "currentCost": -18.0408,
+            "currentComm": 0.01082448,
+            "unrealisedCost": -18.0408,
+            "realisedGrossCost": 0.0,
+            "realisedCost": 0.01082448,
+            "isOpen": true,
+            "markPrice": 180.081,
+            "markValue": -18.0081,
+            "posCost": -18.0408,
+            "posCross": 0,
+            "posCrossMargin": 0.0,
+            "posInit": 9.0204,
+            "posComm": 0.01623672,
+            "posCommCommon": 0.01623672,
+            "posLoss": 0.0,
+            "posMargin": 9.03663672,
+            "posMaint": 0.14252232,
+            "maintMargin": 9.06933672,
+            "realisedGrossPnl": 0.0,
+            "realisedPnl": -0.01082448,
+            "unrealisedPnl": 0.0327,
+            "unrealisedPnlPcnt": 0.0018,
+            "unrealisedRoePcnt": 0.0036,
+            "avgEntryPrice": 180.408,
+            "liquidationPrice": 269.349,
+            "bankruptPrice": 270.612,
+            "settleCurrency": "USDT",
+            "isInverse": false,
+            "maintainMargin": 0.007
+        }
+    ]    
+    """
 
 
 def test_get_order_list(kucoinf_real):
