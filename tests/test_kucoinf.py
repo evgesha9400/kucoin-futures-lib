@@ -35,7 +35,7 @@ async def test_create_order(mock_kucoinf):
         price=None,
         leverage=2,
     )
-    mock_kucoinf.websocket.listen_for_fill.assert_called_once_with(order_id="e12345689")
+    mock_kucoinf.trade.poll_for_fill.assert_called_once_with(order_id="e12345689")
 
     mock_kucoinf.trade.create_stop_loss_and_take_profit.assert_called_once_with(
         instrument="XBTUSDTM",

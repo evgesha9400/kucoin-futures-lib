@@ -104,12 +104,3 @@ async def test_listen_for_entry(mock_subscribe, mock_entry_handler, test_kucoinf
         instrument=instrument, entry_high=entry_high, entry_low=entry_low
     )
     mock_subscribe.assert_called_once_with(mock_entry_handler.return_value, 0.2)
-
-
-@pytest.mark.asyncio
-@patch(f"{module}.FillHandler", autospec=True)
-@patch(f"{module}.KucoinFuturesWebsocket.subscribe", new_callable=AsyncMock)
-async def test_listen_for_fill(mock_subscribe, mock_entry_handler, test_kucoinf):
-    order_id = "1234567890"
-    await test_kucoinf.websocket.listen_for_fill(order_id=order_id, timeout=0.2)
-    mock_subscribe.assert_called_once_with(mock_entry_handler.return_value, 0.2)

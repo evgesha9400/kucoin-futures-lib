@@ -7,7 +7,7 @@ from typing import Union, Callable, Awaitable, Optional
 from kucoin_futures.client import WsToken
 from kucoin_futures.ws_client import KucoinFuturesWsClient
 
-from kucoin_futures_lib.handlers import OcoHandler, EntryRangeHandler, HandlerABC, FillHandler
+from kucoin_futures_lib.handlers import OcoHandler, EntryRangeHandler, HandlerABC
 
 logger = logging.getLogger(__name__)
 
@@ -78,16 +78,4 @@ class KucoinFuturesWebsocket:
         handler = EntryRangeHandler(
             instrument=instrument, entry_high=entry_high, entry_low=entry_low
         )
-        await self.subscribe(handler, timeout)
-
-    async def listen_for_fill(
-        self,
-        order_id: str,
-        timeout: float = 60 * 60 * 12,
-    ) -> None:
-        """Listen for the order to be filled.
-        :param order_id: Order ID
-        :param timeout: timeout in seconds. Default is 12 hours
-        """
-        handler = FillHandler(order_id=order_id)
         await self.subscribe(handler, timeout)
