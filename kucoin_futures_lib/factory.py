@@ -29,7 +29,7 @@ def initialize_user(
 ) -> "KucoinFuturesUser":
     """Initialize the Kucoin Futures User client using API credentials."""
     user = User(key=api_key, secret=api_secret, passphrase=api_passphrase)
-    return KucoinFuturesUser(user=user)
+    return KucoinFuturesUser(client=user)
 
 
 def initialize_market(
@@ -37,7 +37,7 @@ def initialize_market(
 ) -> KucoinFuturesMarket:
     """Initialize the Kucoin Futures Market client using API credentials."""
     market = Market(key=api_key, secret=api_secret, passphrase=api_passphrase)
-    return KucoinFuturesMarket(market=market)
+    return KucoinFuturesMarket(client=market)
 
 
 def initialize_trade(
@@ -45,7 +45,7 @@ def initialize_trade(
 ) -> KucoinFuturesTrade:
     """Initialize the Kucoin Futures Trade client using API credentials."""
     trade = Trade(key=api_key, secret=api_secret, passphrase=api_passphrase)
-    return KucoinFuturesTrade(trade=trade)
+    return KucoinFuturesTrade(client=trade)
 
 
 def initialize_websocket(

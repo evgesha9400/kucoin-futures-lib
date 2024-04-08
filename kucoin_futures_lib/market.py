@@ -13,31 +13,31 @@ class KucoinFuturesMarket:
 
     def __init__(
         self,
-        market: Market = None,
+        client: Market = None,
     ):
         """Initialize the Kucoin Futures client."""
-        self.market = market
+        self.client = client
 
     def get_current_price(self, instrument: str) -> float:
         """Get the current price of an instrument.
         :param instrument: The instrument symbol
         :return: The current price of the instrument"""
         logger.debug("Getting current price for: %s", instrument)
-        return float(self.market.get_ticker(instrument)["price"])
+        return float(self.client.get_ticker(instrument)["price"])
 
     def get_tick_size(self, instrument: str) -> float:  # Unused
         """Get the tick size for an instrument.
         :param instrument: The instrument symbol
         :return: The tick size"""
         logger.debug("Getting tick size for: %s", instrument)
-        return self.market.get_contract_detail(instrument)["tickSize"]
+        return self.client.get_contract_detail(instrument)["tickSize"]
 
     def get_multiplier(self, instrument: str) -> float:  # Unused
         """Get the contract multiplier for an instrument.
         :param instrument: The instrument symbol
         :return: The contract multiplier"""
         logger.debug("Getting multiplier for: %s", instrument)
-        return self.market.get_contract_detail(instrument)["multiplier"]
+        return self.client.get_contract_detail(instrument)["multiplier"]
 
     async def poll_for_entry(
         self,

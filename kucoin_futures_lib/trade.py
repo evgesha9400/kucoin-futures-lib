@@ -19,11 +19,11 @@ class KucoinFuturesTrade:
 
     def __init__(
         self,
-        trade: Trade = None,
+        client: Trade = None,
         leverage: int = 2,
     ):
         """Initialize the Kucoin Futures client."""
-        self.trade = trade
+        self.client = client
         self.leverage = leverage
 
     def get_open_orders(self, instrument: str = None) -> List[Dict[str, Any]]:  # Unused
@@ -31,7 +31,7 @@ class KucoinFuturesTrade:
         :param instrument: The instrument symbol
         :return: A dictionary containing the open orders for the instrument"""
         logger.debug("Getting open orders")
-        response = self.trade.get_order_list()
+        response = self.client.get_order_list()
         if instrument:
             open_orders = [
                 order for order in response["items"] if order["symbol"] == instrument
@@ -45,7 +45,7 @@ class KucoinFuturesTrade:
         https://www.kucoin.com/docs/rest/futures-trading/orders/cancel-order-by-orderid
         """
         logger.debug("Cancelling order by order id: %s", order_id)
-        self.trade.cancel_order(orderId=order_id)
+        self.client.cancel_order(orderId=order_id)
         logger.info("Order %s cancel request sent.", order_id)
 
     async def cancel_order_and_wait(self, order_id: str) -> None:
@@ -63,7 +63,7 @@ class KucoinFuturesTrade:
         """Create a take profit order using limit order.
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         """
-        response = self.trade.create_limit_order(
+        response = self.client.create_limit_order(
             symbol=instrument,
             side="buy" if entry_side == "sell" else "sell",
             price=str(tp_price),
@@ -87,7 +87,7 @@ class KucoinFuturesTrade:
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         """
         side, stop = ("sell", "up") if entry_side == "buy" else ("buy", "down")
-        response = self.trade.create_market_order(
+        response = self.client.create_market_order(
             symbol=instrument,
             side=side,
             stop=stop,
@@ -117,7 +117,7 @@ class KucoinFuturesTrade:
         :return: The order id of the stop loss order
         """
         side, stop = ("sell", "down") if entry_side == "buy" else ("buy", "up")
-        response = self.trade.create_market_order(
+        response = self.client.create_market_order(
             symbol=instrument,
             side=side,
             stop=stop,
@@ -144,7 +144,7 @@ class KucoinFuturesTrade:
         :return: The order id of the stop loss order
         """
         side, stop = ("sell", "down") if entry_side == "buy" else ("buy", "up")
-        response = self.trade.create_limit_order(
+        response = self.client.create_limit_order(
             symbol=instrument,
             side=side,
             stop=stop,
@@ -178,7 +178,7 @@ class KucoinFuturesTrade:
         """
         side = side.lower()
         leverage = leverage or self.leverage
-        response = self.trade.create_market_order(
+        response = self.client.create_market_order(
             symbol=instrument, side=side, size=str(size), lever=str(leverage)
         )
         entry_order_id = response["orderId"]
@@ -210,7 +210,7 @@ class KucoinFuturesTrade:
         side = side.lower()
         leverage = leverage or self.leverage
 
-        response = self.trade.create_limit_order(
+        response = self.client.create_limit_order(
             symbol=instrument,
             side=side,
             lever=str(leverage),
@@ -293,7 +293,7 @@ class KucoinFuturesTrade:
         """
         attempt = 0
         while attempt < max_attempts:
-            recent_fills = self.trade.get_recent_fills()
+            recent_fills = self.client.get_recent_fills()
             logger.debug("Recent fills: %s", json.dumps(recent_fills))
             if isinstance(recent_fills, list):
                 for fill in recent_fills:
@@ -329,7 +329,7 @@ class KucoinFuturesTrade:
         """
         attempt = 0
         while attempt < max_attempts:
-            order_details = self.trade.get_order_details(order_id)
+            order_details = self.client.get_order_details(order_id)
             logger.info("Order details: %s", json.dumps(order_details))
             if order_details["status"] == "done":
                 logger.info("Order %s is done.", order_id)

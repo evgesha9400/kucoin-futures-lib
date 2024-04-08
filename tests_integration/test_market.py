@@ -5,9 +5,75 @@ logger = logging.getLogger(__name__)
 
 
 def test_get_contract_detail(kucoinf_real):
-    contract_detail = kucoinf_real.market.market.get_contract_detail("XBTUSDTM")
+    contract_detail = kucoinf_real.market.client.get_contract_detail("ETHUSDTM")
     logger.info(f"contract_detail:\n{json.dumps(contract_detail, indent=4)}")
     """
+    {
+        "symbol": "ETHUSDTM",
+        "rootSymbol": "USDT",
+        "type": "FFWCSX",
+        "firstOpenDate": 1591086000000,
+        "expireDate": null,
+        "settleDate": null,
+        "baseCurrency": "ETH",
+        "quoteCurrency": "USDT",
+        "settleCurrency": "USDT",
+        "maxOrderQty": 1000000,
+        "maxPrice": 1000000.0,
+        "lotSize": 1,
+        "tickSize": 0.01,
+        "indexPriceTickSize": 0.01,
+        "multiplier": 0.01,
+        "initialMargin": 0.01,
+        "maintainMargin": 0.005,
+        "maxRiskLimit": 100000,
+        "minRiskLimit": 100000,
+        "riskStep": 50000,
+        "makerFeeRate": 0.0002,
+        "takerFeeRate": 0.0006,
+        "takerFixFee": 0.0,
+        "makerFixFee": 0.0,
+        "settlementFee": null,
+        "isDeleverage": true,
+        "isQuanto": true,
+        "isInverse": false,
+        "markMethod": "FairPrice",
+        "fairMethod": "FundingRate",
+        "fundingBaseSymbol": ".ETHINT8H",
+        "fundingQuoteSymbol": ".USDTINT8H",
+        "fundingRateSymbol": ".ETHUSDTMFPI8H",
+        "indexSymbol": ".KETHUSDT",
+        "settlementSymbol": "",
+        "status": "Open",
+        "fundingFeeRate": 0.000154,
+        "predictedFundingFeeRate": 0.000286,
+        "fundingRateGranularity": 28800000,
+        "openInterest": "5527729",
+        "turnoverOf24h": 141762234.5697441,
+        "volumeOf24h": 41689.09,
+        "markPrice": 3427.67,
+        "indexPrice": 3427.27,
+        "lastTradePrice": 3428.57,
+        "nextFundingRateTime": 10947682,
+        "maxLeverage": 100,
+        "sourceExchanges": [
+            "okex",
+            "binance",
+            "kucoin",
+            "gateio",
+            "bybit",
+            "bitmart",
+            "bitget"
+        ],
+        "premiumsSymbol1M": ".ETHUSDTMPI",
+        "premiumsSymbol8H": ".ETHUSDTMPI8H",
+        "fundingBaseSymbol1M": ".ETHINT",
+        "fundingQuoteSymbol1M": ".USDTINT",
+        "lowPrice": 3355.47,
+        "highPrice": 3460.63,
+        "priceChgPct": 0.0212,
+        "priceChg": 71.45
+    }
     {
         "symbol": "XBTUSDTM",
         "rootSymbol": "USDT",
@@ -78,7 +144,7 @@ def test_get_contract_detail(kucoinf_real):
 
 
 def test_get_ticker(kucoinf_real):
-    ticker = kucoinf_real.market.market.get_ticker("XBTUSDTM")
+    ticker = kucoinf_real.market.client.get_ticker("XBTUSDTM")
     logger.info(f"ticker:\n{json.dumps(ticker, indent=4)}")
     """
     {

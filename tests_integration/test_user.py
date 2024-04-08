@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 def test_get_account_overview(kucoinf_real):
-    account_overview = kucoinf_real.user.user.get_account_overview()
+    account_overview = kucoinf_real.user.client.get_account_overview()
     logger.info(f"account_overview:\n{json.dumps(account_overview, indent=4)}")
     """
     {

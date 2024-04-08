@@ -11,8 +11,8 @@ logger = logging.getLogger(__name__)
 class KucoinFuturesUser:
     """Kucoin Futures user wrapper class."""
 
-    def __init__(self, user: User = None, currency: str = "USDT"):
-        self.user = user
+    def __init__(self, client: User = None, currency: str = "USDT"):
+        self.client = client
         self.currency = currency
 
     def get_account_overview(self, currency: Optional[str] = None) -> dict:
@@ -21,7 +21,7 @@ class KucoinFuturesUser:
         :return: The account overview"""
         logger.debug("Getting account overview")
         currency = currency or self.currency
-        return self.user.get_account_overview(currency=currency)
+        return self.client.get_account_overview(currency=currency)
 
     def get_balance(self, currency: Optional[str] = None) -> float:
         """Get the account balance.

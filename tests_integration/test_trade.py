@@ -5,7 +5,7 @@ logger = logging.getLogger(__name__)
 
 
 def test_get_order_list(kucoinf_real):
-    order_list = kucoinf_real.trade.trade.get_order_list()
+    order_list = kucoinf_real.trade.client.get_order_list()
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
     """
     {
@@ -97,5 +97,5 @@ def test_get_order_list(kucoinf_real):
 
 def test_cancel_order(kucoinf_real):
     order_id = "165492008100589568"
-    order_list = kucoinf_real.trade.trade.cancel_order(orderId=order_id)
+    order_list = kucoinf_real.trade.client.cancel_order(orderId=order_id)
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
