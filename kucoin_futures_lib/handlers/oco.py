@@ -51,14 +51,15 @@ class OcoHandler(HandlerABC):
         """
         trade_order = msg.get("data", {})
         order_id = trade_order.get("orderId", "")
-        message_type = trade_order.get("type", "")
+        status = trade_order.get("status", "")
 
-        if order_id == self.limit_order_id and message_type == "filled":
-            logger.info("Limit order %s is done.", self.limit_order_id)
-            await self.cancel_order(self.market_order_id)
-        elif order_id == self.market_order_id and message_type == "filled":
-            logger.info("Market order %s is done.", self.market_order_id)
-            self._canceled.set()
+        if status == "done":
+            if order_id == self.limit_order_id:
+                logger.info("Limit order %s is done.", self.limit_order_id)
+                await self.cancel_order(self.market_order_id)
+            elif order_id == self.market_order_id:
+                logger.info("Market order %s is done.", self.market_order_id)
+                self._canceled.set()
 
     async def cancel_order(self, order_id: str) -> None:
         """Cancel the order based on its type (sync or async)."""

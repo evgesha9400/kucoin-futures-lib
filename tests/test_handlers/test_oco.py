@@ -19,7 +19,7 @@ async def test_handle_cancels_market_when_limit_is_done():
         {
             "data": {
                 "orderId": tp_order_id,
-                "type": "filled",
+                "status": "done",
             }
         }
     )
@@ -43,7 +43,7 @@ async def test_handle_stops_when_market_order_is_filled():
         {
             "data": {
                 "orderId": sl_order_id,
-                "type": "filled",
+                "status": "done",
             }
         }
     )
