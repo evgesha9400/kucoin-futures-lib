@@ -49,6 +49,9 @@ class OcoHandler(HandlerABC):
         :param msg: The trade order message.
         https://www.kucoin.com/docs/websocket/futures-trading/private-channels/trade-orders
         """
+        if self._canceled.is_set():
+            return
+
         trade_order = msg.get("data", {})
         order_id = trade_order.get("orderId", "")
         status = trade_order.get("status", "")

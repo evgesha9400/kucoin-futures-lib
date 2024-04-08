@@ -45,10 +45,15 @@ class EntryRangeHandler(HandlerABC):
         :param msg: The trade order message.
         https://www.kucoin.com/docs/websocket/futures-trading/public-channels/get-ticker-v2
         """
+
+        if self._entered.is_set():
+            return
+
         ticker = msg.get("data", {})
         best_bid_price = float(ticker.get("bestBidPrice", 0))
         best_ask_price = float(ticker.get("bestAskPrice", 0))
         if best_bid_price >= self.entry_low and best_ask_price <= self.entry_high:
+            self._entered.set()
             logger.info(
                 "Instrument %s has reached the entry range: %s <= %s <= %s",
                 self.instrument,
@@ -56,4 +61,4 @@ class EntryRangeHandler(HandlerABC):
                 best_bid_price,
                 self.entry_high,
             )
-            self._entered.set()
+

@@ -41,6 +41,24 @@ class KucoinFuturesWebsocket:
         finally:
             await ws_client.unsubscribe(handler.topic)
 
+    async def listen_for_entry(
+        self,
+        instrument: str,
+        entry_high: float,
+        entry_low: float,
+        timeout: float = 60 * 60 * 12,
+    ) -> None:
+        """Listen for the entry price range.
+        :param instrument: Instrument symbol
+        :param entry_high: Entry high price
+        :param entry_low: Entry low price
+        :param timeout: timeout in seconds. Default is 12 hours
+        """
+        handler = EntryRangeHandler(
+            instrument=instrument, entry_high=entry_high, entry_low=entry_low
+        )
+        await self.subscribe(handler, timeout)
+
     async def tp_sl_cancel(
         self,
         tp_order_id: str,
@@ -61,21 +79,3 @@ class KucoinFuturesWebsocket:
             cancel_order=cancel_order,
         )
         await self.subscribe(handler, None)
-
-    async def listen_for_entry(
-        self,
-        instrument: str,
-        entry_high: float,
-        entry_low: float,
-        timeout: float = 60 * 60 * 12,
-    ) -> None:
-        """Listen for the entry price range.
-        :param instrument: Instrument symbol
-        :param entry_high: Entry high price
-        :param entry_low: Entry low price
-        :param timeout: timeout in seconds. Default is 12 hours
-        """
-        handler = EntryRangeHandler(
-            instrument=instrument, entry_high=entry_high, entry_low=entry_low
-        )
-        await self.subscribe(handler, timeout)
