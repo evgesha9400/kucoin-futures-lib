@@ -66,7 +66,7 @@ class KucoinFuturesTrade:
         """
         close_order = False if reduce_amount else True
         reduce_only = True if reduce_amount else False
-        size = reduce_amount
+        size = str(reduce_amount) if reduce_amount else None
 
         response = self.client.create_limit_order(
             symbol=instrument,
@@ -96,7 +96,8 @@ class KucoinFuturesTrade:
         side, stop = ("sell", "up") if entry_side == "buy" else ("buy", "down")
         close_order = False if reduce_amount else True
         reduce_only = True if reduce_amount else False
-        size = reduce_amount
+        size = str(reduce_amount) if reduce_amount else None
+
         response = self.client.create_market_order(
             symbol=instrument,
             side=side,
