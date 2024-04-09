@@ -1,17 +1,37 @@
 # Kucoin Futures Library
 
 ## Class Structure
-```
-KucoinFutures
-├── KucoinFuturesMarket <- (client.Market)
-├── KucoinFuturesTrade <- (client.Trade)
-├── KucoinFuturesUser <- (client.User)
-└── KucoinFuturesWebsocket <- (client.WsToken, ws_client.KucoinFuturesWsClient)
-    ├── EntryRangeHandler
-    └── OcoHandler
+```mermaid
+classDiagram
 
-client = kucoin_futures.client
-ws_client = kucoin_futures.ws_client
+namespace kucoin_futures_lib {
+    class KucoinFutures["KucoinFutures"]
+    class KucoinFuturesMarket["KucoinFuturesMarket"]
+    class KucoinFuturesTrade["KucoinFuturesTrade"]
+    class KucoinFuturesUser["KucoinFuturesUser"]
+    class KucoinFuturesWebsocket["KucoinFuturesWebsocket"]
+    class KucoinFuturesHelper["KucoinFuturesHelper"]
+    class EntryRangeHandler["handlers.EntryRangeHandler"]
+    class OcoHandler["handlers.OcoHandler"]
+}
+namespace kucoin_futures {
+    class Market["client.Market"]
+    class Trade["client.Trade"]
+    class User["client.User"]
+    class WsToken["client.WsToken"]
+    class KucoinFuturesWsClient["ws_client.KucoinFuturesWsClient"]
+}
+KucoinFutures o-- KucoinFuturesMarket
+KucoinFutures o-- KucoinFuturesTrade
+KucoinFutures o-- KucoinFuturesUser
+KucoinFutures o-- KucoinFuturesWebsocket
+KucoinFuturesMarket o-- Market
+KucoinFuturesTrade o-- Trade
+KucoinFuturesUser o-- User
+KucoinFuturesWebsocket o-- WsToken
+KucoinFuturesWebsocket o-- KucoinFuturesWsClient
+KucoinFuturesWebsocket o-- EntryRangeHandler
+KucoinFuturesWebsocket o-- OcoHandler
 ```
 
 ## Usage Examples
