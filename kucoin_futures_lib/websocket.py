@@ -61,15 +61,15 @@ class KucoinFuturesWebsocket:
 
     async def tp_sl_cancel(
         self,
+        instrument: str,
         tp_order_id: str,
         sl_order_id: str,
-        instrument: str,
         cancel_order: Union[Callable[[str], None], Callable[[str], Awaitable[None]]],
     ) -> None:
         """Listen for take profit and stop loss orders and cancel the other order when one is done.
-        :param tp_order_id: Take profit order ID
-        :param sl_order_id: Stop loss order ID
         :param instrument: Instrument symbol
+        :param tp_order_id: Take profit order ID, must be a limit order.
+        :param sl_order_id: Stop loss order ID, must be a market stop order.
         :param cancel_order: Function to cancel the order
         """
         handler = OcoHandler(
