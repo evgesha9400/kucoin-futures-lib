@@ -53,7 +53,8 @@ async def test_subscribe_timeout(mock_create):
     websocket = KucoinFuturesWebsocket(token=AsyncMock())
 
     # Act
-    await websocket.subscribe(mock_handler, timeout=0.001)
+    with pytest.raises(asyncio.TimeoutError, match="Timeout reached for"):
+        await websocket.subscribe(mock_handler, timeout=0.001)
 
     # Assert
     mock_create.assert_called_once_with(

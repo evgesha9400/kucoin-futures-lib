@@ -21,7 +21,11 @@ class KucoinFuturesWebsocket:
     async def subscribe(
         self, handler: HandlerABC, timeout: Optional[float] = 60 * 60 * 12
     ) -> None:
-        """Subscribe to the WebSocket topic."""
+        """Subscribe to the WebSocket topic.
+        :param handler: Handler object
+        :param timeout: Timeout in seconds. Default is 12 hours
+        :raises asyncio.TimeoutError: If the timeout is reached
+        """
         ws_client = await KucoinFuturesWsClient.create(
             loop=None,
             client=self.token,
@@ -36,9 +40,10 @@ class KucoinFuturesWebsocket:
             else:
                 await handler.done.wait()
         except asyncio.TimeoutError:
-            logger.warning("Timeout reached. Unsubscribing from %s", handler.topic)
             handler.done.set()
+            raise asyncio.TimeoutError(f"Timeout reached for {handler}")
         finally:
+            logger.info("Unsubscribing from %s", handler.topic)
             await ws_client.unsubscribe(handler.topic)
 
     async def listen_for_entry(
@@ -53,6 +58,7 @@ class KucoinFuturesWebsocket:
         :param entry_high: Entry high price
         :param entry_low: Entry low price
         :param timeout: timeout in seconds. Default is 12 hours
+        :raises asyncio.TimeoutError: If the timeout is reached
         """
         handler = EntryRangeHandler(
             instrument=instrument, entry_high=entry_high, entry_low=entry_low
