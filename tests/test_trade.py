@@ -153,6 +153,31 @@ def test_create_take_profit_limit(mock_create_limit_order, test_kucoinf):
     assert order_id == "12345689"
 
 
+@patch(f"{trade}.create_limit_order")
+def test_create_reduce_take_profit_limit(mock_create_limit_order, test_kucoinf):
+    mock_create_limit_order.return_value = {"orderId": "12345689"}
+    order_id = test_kucoinf.trade.create_take_profit_limit(
+        instrument="XBTUSDTM",
+        entry_side="buy",
+        tp_price=1000,
+        reduce_amount=1,
+    )
+    mock_create_limit_order.assert_called_once_with(
+        symbol="XBTUSDTM",
+        side="sell",
+        price="1000",
+        timeInForce="GTC",
+        closeOrder=False,
+        reduceOnly=True,
+        size="1",
+        lever=None,
+    )
+    assert order_id == "12345689"
+
+
+
+
+
 @patch(f"{trade}.create_market_order")
 def test_create_take_profit_stop(mock_create_market_order, test_kucoinf):
     mock_create_market_order.return_value = {"orderId": "12345689"}
@@ -171,6 +196,30 @@ def test_create_take_profit_stop(mock_create_market_order, test_kucoinf):
         closeOrder=True,
         lever=None,
         size=None,
+    )
+    assert order_id == "12345689"
+
+
+@patch(f"{trade}.create_market_order")
+def test_create_reduce_take_profit_stop(mock_create_market_order, test_kucoinf):
+    mock_create_market_order.return_value = {"orderId": "12345689"}
+    order_id = test_kucoinf.trade.create_take_profit_stop(
+        instrument="XBTUSDTM",
+        entry_side="buy",
+        tp_price=1000,
+        reduce_amount=1,
+    )
+    mock_create_market_order.assert_called_once_with(
+        symbol="XBTUSDTM",
+        side="sell",
+        stop="up",
+        stopPrice="1000",
+        timeInForce="GTC",
+        stopPriceType="TP",
+        closeOrder=False,
+        reduceOnly=True,
+        size="1",
+        lever=None,
     )
     assert order_id == "12345689"
 
