@@ -232,7 +232,15 @@ class KucoinFuturesTrade:
         take_profit_type: Literal["limit", "stop"] = "limit",
         stop_loss_type: Literal["limit", "stop"] = "stop",
     ) -> TpSlOrderIds:
-        """Convenience method to create stop loss and take profit orders for an open position."""
+        """Convenience method to create stop loss and take profit orders for an open position.
+        This method will close the position if the stop loss or take profit is hit.
+        :param instrument: The instrument symbol
+        :param side: The side of the order (buy or sell)
+        :param take_profit: The take profit price
+        :param stop_loss: The stop loss price
+        :param take_profit_type: The type of take profit order (limit or stop)
+        :param stop_loss_type: The type of stop loss order (limit or stop)
+        """
 
         if take_profit_type == "stop":
             tp_order_id = self.create_take_profit_stop(
