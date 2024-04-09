@@ -99,9 +99,17 @@ def test_get_position_list(kucoinf_real):
 
 
 def test_get_order_list(kucoinf_real):
-    order_list = kucoinf_real.trade.client.get_order_list()
+    order_list = kucoinf_real.trade.client.get_order_list(status="active")
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
     """
+    {
+        "currentPage": 1,
+        "pageSize": 50,
+        "totalNum": 0,
+        "totalPage": 0,
+        "items": []
+    }
+    
     {
     "currentPage": 1,
     "pageSize": 50,
@@ -212,3 +220,14 @@ def test_cancel_order(kucoinf_real):
     order_id = "165492008100589568"
     order_list = kucoinf_real.trade.client.cancel_order(orderId=order_id)
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
+
+
+
+def test_get_open_active_order_by_id(kucoinf_real):
+    response = kucoinf_real.trade.client.get_order_list(status="active")
+    filtered_orders = []
+    if isinstance(response, dict) and "items" in response:
+        order_list = response["items"]
+        filtered_orders = [order for order in order_list if order["id"] == "167300022147239936"]
+
+    logger.info(f"filtered_orders:\n{json.dumps(filtered_orders, indent=4)}")

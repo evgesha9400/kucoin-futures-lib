@@ -10,7 +10,7 @@ trade = f"{module}.Trade"
 
 
 @patch(f"{trade}.get_order_list")
-def test_get_open_orders(mock_get_order_list, test_kucoinf):
+def test_get_orders(mock_get_order_list, test_kucoinf):
     xbtusdtm_order = {
         "id": "162367525139533826",
         "symbol": "XBTUSDTM",
@@ -90,13 +90,12 @@ def test_get_open_orders(mock_get_order_list, test_kucoinf):
     mock_get_order_list.return_value = {
         "currentPage": 1,
         "pageSize": 50,
-        "totalNum": 139,
-        "totalPage": 3,
+        "totalNum": 2,
+        "totalPage": 1,
         "items": [xbtusdtm_order, xrpusdtm_order],
     }
-    orders = test_kucoinf.trade.get_open_orders("XBTUSDTM")
-    assert len(orders) == 1
-    assert orders[0] == xbtusdtm_order
+    orders = test_kucoinf.trade.get_orders()
+    assert len(orders) == 2
 
 
 @patch(f"{trade}.create_market_order")
