@@ -59,18 +59,24 @@ class KucoinFuturesTrade:
         instrument: str,
         entry_side: str,
         tp_price: float,
+        reduce_amount: Optional[int] = None,
     ) -> str:
         """Create a take profit order using limit order.
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         """
+        close_order = False if reduce_amount else True
+        reduce_only = True if reduce_amount else False
+        size = reduce_amount
+
         response = self.client.create_limit_order(
             symbol=instrument,
             side="buy" if entry_side == "sell" else "sell",
             price=str(tp_price),
             timeInForce="GTC",
-            closeOrder=True,
+            closeOrder=close_order,
+            reduceOnly=reduce_only,
             lever=None,
-            size=None,
+            size=size,
         )
         logger.info(
             "Take profit (limit) order created for %s at %s", instrument, tp_price
@@ -82,11 +88,15 @@ class KucoinFuturesTrade:
         instrument: str,
         entry_side: str,
         tp_price: float,
+        reduce_amount: Optional[int] = None,
     ) -> str:
         """Create take profit order using stop market order.
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         """
         side, stop = ("sell", "up") if entry_side == "buy" else ("buy", "down")
+        close_order = False if reduce_amount else True
+        reduce_only = True if reduce_amount else False
+        size = reduce_amount
         response = self.client.create_market_order(
             symbol=instrument,
             side=side,
@@ -94,8 +104,9 @@ class KucoinFuturesTrade:
             stopPriceType="TP",
             stopPrice=str(tp_price),
             timeInForce="GTC",
-            closeOrder=True,
-            size=None,
+            closeOrder=close_order,
+            reduceOnly=reduce_only,
+            size=size,
             lever=None,
         )
         logger.info(
