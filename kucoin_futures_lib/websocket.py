@@ -44,7 +44,8 @@ class KucoinFuturesWebsocket:
             raise asyncio.TimeoutError(f"Timeout reached for {handler}")
         finally:
             logger.info("Unsubscribing from %s", handler.topic)
-            await ws_client.unsubscribe(handler.topic)
+            # noinspection PyAsyncCall
+            asyncio.create_task(ws_client.unsubscribe(handler.topic))
 
     async def listen_for_entry(
         self,
