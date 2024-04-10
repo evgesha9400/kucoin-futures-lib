@@ -1,3 +1,6 @@
+""" This is an OCO handler that waits for limit order to be filled and then cancels the stop order.
+The stop order will automatically cancel the limit order if it is filled first."""
+
 import asyncio
 import inspect
 import logging
