@@ -1,6 +1,7 @@
 import json
 import logging
 
+import pytest
 
 logger = logging.getLogger(__name__)
 
@@ -99,7 +100,7 @@ def test_get_position_list(kucoinf_real):
 
 
 def test_get_order_list(kucoinf_real):
-    order_list = kucoinf_real.trade.client.get_order_list(status="active")
+    order_list = kucoinf_real.trade.client.get_order_list(status="done")
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
     """
     {
@@ -198,7 +199,7 @@ def test_get_order_list(kucoinf_real):
 
 
 def test_get_open_order_details(kucoinf_real):
-    open_order_details = kucoinf_real.trade.client.get_open_order_details("XBTUSDTM")
+    open_order_details = kucoinf_real.trade.client.get_open_order_details()
     logger.info(f"open_order_details:\n{json.dumps(open_order_details, indent=4)}")
     """
     {
@@ -211,23 +212,33 @@ def test_get_open_order_details(kucoinf_real):
     """
 
 
-def test_get_open_stop_orders(kucoinf_real):
+def test_get_open_stop_order(kucoinf_real):
     stop_orders = kucoinf_real.trade.client.get_open_stop_order()
     logger.info(f"stop_orders:\n{json.dumps(stop_orders, indent=4)}")
 
 
 def test_cancel_order(kucoinf_real):
-    order_id = "165492008100589568"
+    order_id = "test_order_id"
     order_list = kucoinf_real.trade.client.cancel_order(orderId=order_id)
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
 
 
 
-def test_get_open_active_order_by_id(kucoinf_real):
-    response = kucoinf_real.trade.client.get_order_list(status="active")
-    filtered_orders = []
-    if isinstance(response, dict) and "items" in response:
-        order_list = response["items"]
-        filtered_orders = [order for order in order_list if order["id"] == "167300022147239936"]
+@pytest.mark.asyncio
+async def test_update_stop_loss_stop(kucoinf_real):
+    order_id = await kucoinf_real.trade.update_stop_loss_stop_price(
+        order_id="test_order_id",
+        sl_price="69464.6",
+    )
+    logger.info(f"order_id: {order_id}")
 
-    logger.info(f"filtered_orders:\n{json.dumps(filtered_orders, indent=4)}")
+
+def test_create_reduce_take_profit_order(kucoinf_real):
+    order_id = kucoinf_real.trade.create_reduce_take_profit_order(
+        symbol="XBTUSDTM",
+        side="sell",
+        size=1,
+        price=70000,
+        reduce_only=True,
+    )
+    logger.info(f"order_id: {order_id}")

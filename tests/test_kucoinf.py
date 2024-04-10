@@ -2,19 +2,11 @@ from unittest.mock import MagicMock
 
 import pytest
 
-module = "kucoin_futures_lib.kucoinf"
-futures = f"{module}.KucoinFutures"
-trade = f"{module}.KucoinFuturesTrade"
-websocket = f"{module}.KucoinFuturesWebsocket"
-
 
 @pytest.mark.asyncio
 async def test_create_order(mock_kucoinf):
     mock_kucoinf.trade.create_order.return_value = "e12345689"
-
-    order_ids = MagicMock(spec=f"{trade}.TpSlOrderIds")
-    order_ids.tp_order_id = "tp12345689"
-    order_ids.sl_order_id = "sl12345689"
+    order_ids = MagicMock(tp_order_id="tp12345689", sl_order_id="sl12345689")
 
     mock_kucoinf.trade.create_stop_loss_and_take_profit.return_value = order_ids
 

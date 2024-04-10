@@ -1,17 +1,12 @@
 import logging
-from unittest.mock import patch
 
 import pytest
 
 logger = logging.getLogger(__name__)
 
-module = "kucoin_futures_lib.market"
-market = f"{module}.Market"
 
-
-@patch(f"{market}.get_contract_detail")
-def test_get_tick_size(mock_get_contract_detail, test_kucoinf):
-    mock_get_contract_detail.return_value = {
+def test_get_tick_size(test_kucoinf):
+    test_kucoinf.market.client.get_contract_detail.return_value = {
         "symbol": "XBTUSDTM",
         "rootSymbol": "USDT",
         "type": "FFWCSX",
@@ -82,9 +77,8 @@ def test_get_tick_size(mock_get_contract_detail, test_kucoinf):
     assert tick_size == 0.1
 
 
-@patch(f"{market}.get_ticker")
-def test_get_current_price(mock_get_ticker, test_kucoinf):
-    mock_get_ticker.return_value = {
+def test_get_current_price(test_kucoinf):
+    test_kucoinf.market.client.get_ticker.return_value = {
         "sequence": 1700524393648,
         "symbol": "XBTUSDTM",
         "side": "sell",
@@ -102,9 +96,8 @@ def test_get_current_price(mock_get_ticker, test_kucoinf):
 
 
 @pytest.mark.asyncio
-@patch(f"{market}.get_ticker")
-async def test_wait_for_entry(mock_get_ticker, test_kucoinf):
-    mock_get_ticker.return_value = {
+async def test_wait_for_entry(test_kucoinf):
+    test_kucoinf.market.client.get_ticker.return_value = {
         "sequence": 1700524393648,
         "symbol": "XBTUSDTM",
         "side": "sell",
@@ -128,9 +121,8 @@ async def test_wait_for_entry(mock_get_ticker, test_kucoinf):
 
 
 @pytest.mark.asyncio
-@patch(f"{market}.get_ticker")
-async def test_wait_for_entry_timeout(mock_get_ticker, test_kucoinf):
-    mock_get_ticker.return_value = {
+async def test_wait_for_entry_timeout(test_kucoinf):
+    test_kucoinf.market.client.get_ticker.return_value = {
         "sequence": 1700524393648,
         "symbol": "XBTUSDTM",
         "side": "sell",
