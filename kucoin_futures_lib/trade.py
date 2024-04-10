@@ -25,28 +25,71 @@ class KucoinFuturesTrade:
         self.client = client
         self.leverage = leverage
 
-    def get_orders(
+    def get_open_limit_orders(
         self,
         instrument: str = None,
-        status: Literal["done", "active"] = "active",
         side: Literal["buy", "sell"] = None,
-        order_type: Literal["limit", "market"] = None,
     ) -> List[Dict[str, Any]]:
-        """https://www.kucoin.com/docs/rest/futures-trading/orders/get-order-list
+        """Method for getting active limit orders.
+        https://www.kucoin.com/docs/rest/futures-trading/orders/get-order-list
         :param instrument: The instrument symbol
-        :param status: The status of the orders to get (done or active)
         :param side: The side of the orders to get (buy or sell)
-        :param order_type: The type of the orders to get (limit or market)
         :return: A dictionary containing the open orders for the instrument"""
 
         params = {
             "instrument": instrument,
-            "status": status,
+            "status": "active",
+            "side": side,
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        logger.debug("Getting orders with params: %s", json.dumps(params))
+        response = self.client.get_order_list(**params)
+        orders = response.get("items", [])
+        return orders
+
+    def get_open_stop_orders(
+        self,
+        instrument: str = None,
+        side: Literal["buy", "sell"] = None,
+        order_type: Literal["limit", "market"] = None,
+    ):
+        """Method for getting untriggered stop orders.
+        https://www.kucoin.com/docs/rest/futures-trading/orders/get-untriggered-stop-order-list
+        :param instrument: The instrument symbol
+        :param side: The side of the orders to get (buy or sell)
+        :param order_type: The type of the orders to get (limit or market)
+        """
+        params = {
+            "instrument": instrument,
             "side": side,
             "type": order_type,
         }
         params = {k: v for k, v in params.items() if v is not None}
         logger.debug("Getting orders with params: %s", json.dumps(params))
+        response = self.client.get_open_stop_order(**params)
+        orders = response.get("items", [])
+        return orders
+
+    def get_order_history(
+        self,
+        instrument: str = None,
+        side: Literal["buy", "sell"] = None,
+        order_type: Literal["limit", "market"] = None,
+    ):
+        """Method for getting order history.
+        https://www.kucoin.com/docs/rest/futures-trading/orders/get-order-list
+        :param instrument: The instrument symbol
+        :param side: The side of the orders to get (buy or sell)
+        :param order_type: The type of the orders to get (limit or market)
+        :return: A dictionary containing the open orders for the instrument"""
+        params = {
+            "instrument": instrument,
+            "status": "done",
+            "side": side,
+            "type": order_type,
+        }
+        params = {k: v for k, v in params.items() if v is not None}
+        logger.debug("Getting order history with params: %s", json.dumps(params))
         response = self.client.get_order_list(**params)
         orders = response.get("items", [])
         return orders
@@ -184,14 +227,38 @@ class KucoinFuturesTrade:
         )
         return response["orderId"]
 
-    def update_stop_loss_price(self, order_id: str, sl_price: float) -> None:
+    async def update_stop_loss_stop_price(self, order_id: str, sl_price: float) -> None:
         """Update the stop loss order price.
         https://www.kucoin.com/docs/rest/futures-trading/orders/update-order
         :param order_id: The order id of the stop loss order
         :param sl_price: The new stop loss price
         """
+        orders = self.get_open_stop_orders()
+        order = next((o for o in orders if o["id"] == order_id), None)
+        if not order:
+            raise ValueError(f"Order {order_id} not found.")
+        self.cancel_order(order_id)
 
-        logger.info("Stop loss order %s updated to %s", order_id, sl_price)
+        instrument = order["symbol"]
+        side = order["side"]
+        stop = order["stop"]
+        stop_price_type = order["stopPriceType"]
+        time_in_force = order["timeInForce"]
+        close_order = order["closeOrder"]
+        leverage = str(order["leverage"])
+        price = str(sl_price)
+        response = self.client.create_market_order(
+            symbol=instrument,
+            side=side,
+            stop=stop,
+            lever=leverage,
+            stopPriceType=stop_price_type,
+            stopPrice=price,
+            timeInForce=time_in_force,
+            closeOrder=close_order,
+        )
+
+        logger.info("Stop loss (stop) order %s updated to %s", order_id, sl_price)
         return response["orderId"]
 
     def create_market_order(
