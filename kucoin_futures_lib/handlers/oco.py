@@ -27,7 +27,7 @@ class OcoHandler(HandlerABC):
         self._topic = "/contractMarket/tradeOrders"
 
     def __repr__(self):
-        return f"OcoHandler({self.instrument}, {self.limit_order_id}, {self.market_order_id})"
+        return f"OcoHandler({self.instrument}, limit_order_id={self.limit_order_id}, market_order_id={self.market_order_id})"
 
     @property
     def topic(self) -> str:

@@ -23,7 +23,7 @@ class EntryRangeHandler(HandlerABC):
         self._topic = "/contractMarket/tickerV2"
 
     def __repr__(self):
-        return f"EntryRangeHandler('{self.instrument}', {self.entry_high}, {self.entry_low})"
+        return f"EntryRangeHandler('{self.instrument}', entry_high={self.entry_high}, entry_low={self.entry_low})"
 
     @property
     def done(self) -> asyncio.Event:
@@ -61,4 +61,3 @@ class EntryRangeHandler(HandlerABC):
                 best_bid_price,
                 self.entry_high,
             )
-
