@@ -12,7 +12,9 @@ class KucoinFuturesHelper:
 
     @staticmethod
     def calculate_lots(
-        lot_size: float, current_price: float, investment_amount: float,
+        lot_size: float,
+        current_price: float,
+        investment_amount: float,
     ) -> int:
         """Calculate the maximum number of lots to buy based on the investment amount, current price, and lot size.
         :param lot_size: The lot size for the instrument. E.g. 0.001 for BTC/USDT.
@@ -35,7 +37,9 @@ class KucoinFuturesHelper:
         lot_size = Decimal(str(lot_size))
 
         lot_price = current_price * lot_size
-        lots = (investment_amount / lot_price).to_integral_value(rounding='ROUND_FLOOR')  # Use Decimal's floor rounding
+        lots = (investment_amount / lot_price).to_integral_value(
+            rounding="ROUND_FLOOR"
+        )  # Use Decimal's floor rounding
         return int(lots)
 
     @staticmethod
