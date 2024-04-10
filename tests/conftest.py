@@ -58,7 +58,6 @@ def mock_oco_handler():
     """Return a mock OCOHandler."""
     with patch("kucoin_futures_lib.websocket.OcoHandler", autospec=True) as mock_oco:
         mock_oco.return_value = mock_oco
-        mock_oco.done.wait = AsyncMock()
         yield mock_oco
 
 
@@ -69,7 +68,6 @@ def mock_entry_range_handler():
         "kucoin_futures_lib.websocket.EntryRangeHandler", autospec=True
     ) as mock_entry_range:
         mock_entry_range.return_value = mock_entry_range
-        mock_entry_range.done.wait = AsyncMock()
         yield mock_entry_range
 
 

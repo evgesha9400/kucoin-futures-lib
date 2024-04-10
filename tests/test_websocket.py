@@ -66,6 +66,7 @@ async def test_tp_sl_cancel(mock_oco_handler, mock_ws_client, test_kucoinf):
     instrument = "XBTUSDTM"
     tp_order_id = "tp987654321"
     sl_order_id = "sl123456789"
+    mock_oco_handler.done = AsyncMock()
 
     await test_kucoinf.websocket.tp_sl_cancel(
         instrument=instrument,
@@ -88,6 +89,7 @@ async def test_listen_for_entry(mock_entry_range_handler, mock_ws_client, test_k
     entry_high = 50000
     entry_low = 40000
     instrument = "XBTUSDTM"
+    mock_entry_range_handler.done = AsyncMock()
 
     await test_kucoinf.websocket.listen_for_entry(
         instrument=instrument, entry_high=entry_high, entry_low=entry_low, timeout=0.2

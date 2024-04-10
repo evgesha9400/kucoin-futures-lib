@@ -83,7 +83,6 @@ async def test_handle_when_distance_is_less_than_trailing_distance(
     direction, sl_price, trailing_distance, mark_price, trailing_step, mock_oco_handler
 ):
     update_order_mock = AsyncMock()
-    mock_oco_handler.done = AsyncMock(return_value=False)
 
     handler = TrailingHandler(
         instrument="XBTUSDTM",
@@ -105,7 +104,7 @@ async def test_handle_when_distance_is_less_than_trailing_distance(
 @pytest.mark.asyncio
 async def test_handle_done_when_oco_handler_is_done(mock_oco_handler):
     update_order_mock = AsyncMock()
-    mock_oco_handler.done = AsyncMock(return_value=True)
+    mock_oco_handler.done.is_set.return_value = True
 
     handler = TrailingHandler(
         instrument="XBTUSDTM",
