@@ -35,6 +35,6 @@ def test_calculate_lots(investment_amount, current_price, lot_size, expected_lot
     lots = KucoinFuturesHelper.calculate_lots(
         investment_amount=investment_amount,
         current_price=current_price,
-        lot_size=lot_size
+        lot_size=lot_size,
     )
     assert lots == expected_lots

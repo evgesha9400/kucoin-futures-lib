@@ -14,6 +14,7 @@ from kucoin_futures_lib.kucoinf import (
 
 logging.basicConfig(level=logging.INFO)
 
+
 @pytest.fixture
 def mock_user_client():
     """Return a mock User client."""
@@ -38,7 +39,9 @@ def mock_market_client():
 @pytest.fixture
 def mock_ws_client():
     """Return a mock KucoinFuturesWsClient."""
-    with patch("kucoin_futures_lib.websocket.KucoinFuturesWsClient", autospec=True) as mock_ws:
+    with patch(
+        "kucoin_futures_lib.websocket.KucoinFuturesWsClient", autospec=True
+    ) as mock_ws:
         mock_ws.create.return_value = mock_ws
         yield mock_ws
 
@@ -62,7 +65,9 @@ def mock_oco_handler():
 @pytest.fixture
 def mock_entry_range_handler():
     """Return a mock EntryRangeHandler."""
-    with patch("kucoin_futures_lib.websocket.EntryRangeHandler", autospec=True) as mock_entry_range:
+    with patch(
+        "kucoin_futures_lib.websocket.EntryRangeHandler", autospec=True
+    ) as mock_entry_range:
         mock_entry_range.return_value = mock_entry_range
         mock_entry_range.done.wait = AsyncMock()
         yield mock_entry_range
@@ -93,5 +98,3 @@ def test_kucoinf(
     kucoinf.market.client = mock_market_client
     kucoinf.websocket.token = mock_ws_token
     return kucoinf
-
-
