@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from kucoin_futures_lib.handlers.oco import OcoHandler
+from kucoin_futures_lib.handlers import OcoHandler
 
 
 @pytest.mark.asyncio

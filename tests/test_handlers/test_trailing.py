@@ -2,7 +2,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from kucoin_futures_lib.handlers.trailing import TrailingHandler
+from kucoin_futures_lib.handlers import TrailingHandler
 
 
 @pytest.mark.parametrize(
@@ -40,7 +40,13 @@ def test_calculate_distance(sl_price, mark_price, expected, mock_oco_handler):
     ],
 )
 async def test_handle_when_distance_is_greater_than_trailing_distance(
-    direction, sl_price, trailing_distance, mark_price, trailing_step, expected, mock_oco_handler
+    direction,
+    sl_price,
+    trailing_distance,
+    mark_price,
+    trailing_step,
+    expected,
+    mock_oco_handler,
 ):
     update_order_mock = AsyncMock()
     mock_oco_handler.done.is_set.return_value = False
@@ -113,9 +119,7 @@ async def test_handle_done_when_oco_handler_is_done(mock_oco_handler):
     )
     handler.calculate_new_price = MagicMock()
 
-    await handler.handle(
-        {"subject": "mark.index.price", "data": {"markPrice": 120.0}}
-    )
+    await handler.handle({"subject": "mark.index.price", "data": {"markPrice": 120.0}})
     update_order_mock.assert_not_called()
     handler.calculate_new_price.assert_not_called()
     assert handler.done.is_set() is True

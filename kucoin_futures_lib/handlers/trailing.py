@@ -2,9 +2,9 @@
 
 import asyncio
 import logging
-from typing import Dict, Callable, Any, Awaitable, Literal, Optional
+from typing import Dict, Callable, Any, Awaitable, Literal
 
-from handlers import OcoHandler
+from kucoin_futures_lib.handlers import OcoHandler
 from kucoin_futures_lib.handlers.base import HandlerABC
 
 logger = logging.getLogger(__name__)
@@ -72,7 +72,11 @@ class TrailingHandler(HandlerABC):
         if distance > self.trailing_distance:
             excess = distance - self.trailing_distance
             adjustment = excess + self.trailing_step
-            return self.sl_order_price + adjustment if self.direction == "buy" else self.sl_order_price - adjustment
+            return (
+                self.sl_order_price + adjustment
+                if self.direction == "buy"
+                else self.sl_order_price - adjustment
+            )
 
     async def handle(self, msg: Dict):
         if self._done.is_set():
