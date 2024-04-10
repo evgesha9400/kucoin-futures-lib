@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+from datetime import datetime
 
 import pytest
 from kucoin_futures.ws_client import KucoinFuturesWsClient
@@ -114,6 +115,51 @@ async def test_websocket_get_ticker_v2(kucoinf_real):
             "bestAskPrice": "65941.5",
             "bestAskSize": 275,
             "ts": 1712170829821000000
+        }
+    }
+    """
+
+
+@pytest.mark.asyncio
+async def test_websocket_get_contract_market_data(kucoinf_real):
+    instrument = "XBTUSDTM"
+    topic = "/contract/instrument:" + instrument
+    message_received = asyncio.Event()
+    count = 0
+
+    async def log_msg(msg):
+        """callback function to log the message"""
+        nonlocal message_received, count
+        if message_received.is_set():
+            return
+        logger.info(f"Contract Market Data:\n{json.dumps(msg, indent=4)}")
+        timestamp = msg.get("data", {}).get("timestamp")
+        dt = datetime.fromtimestamp(timestamp/ 1000)
+        logger.info(f"\nTimestamp: {dt.isoformat()}")
+        count += 1
+        if count == 10:
+            message_received.set()
+
+    ws_client = await KucoinFuturesWsClient.create(
+        None, kucoinf_real.websocket.token, log_msg, private=False
+    )
+
+    await ws_client.subscribe(topic)
+    try:
+        await message_received.wait()
+    finally:
+        await ws_client.unsubscribe(topic)
+
+    """
+    {
+        "topic": "/contract/instrument:XBTUSDTM",
+        "type": "message",
+        "subject": "mark.index.price",
+        "data": {
+            "markPrice": 67662.14,
+            "indexPrice": 67660.15,
+            "granularity": 1000,
+            "timestamp": 1712755747000
         }
     }
     """
