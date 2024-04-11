@@ -4,7 +4,6 @@ import asyncio
 import logging
 from typing import Dict, Callable, Any, Awaitable, Literal
 
-from kucoin_futures_lib.handlers import OcoHandler
 from kucoin_futures_lib.handlers.base import HandlerABC
 
 logger = logging.getLogger(__name__)
@@ -21,7 +20,7 @@ class TrailingHandler(HandlerABC):
         sl_order_price: float,
         trailing_distance: float,
         trailing_step: float,
-        oco_handler: OcoHandler,
+        handler: HandlerABC,
         update_order: Callable[[Any], Awaitable[None]],
     ):
         """Initialize the handler.
@@ -42,7 +41,7 @@ class TrailingHandler(HandlerABC):
         self.trailing_distance = trailing_distance
         self.trailing_step = trailing_step
         self.update_order = update_order
-        self.oco_handler = oco_handler
+        self.external_handler = handler
         self._done = asyncio.Event()
         self._topic = "/contract/instrument"
 
@@ -82,7 +81,7 @@ class TrailingHandler(HandlerABC):
         if self._done.is_set():
             return
 
-        if self.oco_handler.done.is_set():
+        if self.external_handler.done.is_set():
             self._done.set()
             return
 

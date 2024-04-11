@@ -22,7 +22,7 @@ def test_calculate_distance(sl_price, mark_price, expected, mock_oco_handler):
         trailing_distance=10.0,
         update_order=AsyncMock(),
         trailing_step=1.0,
-        oco_handler=mock_oco_handler,
+        handler=mock_oco_handler,
     )
     assert handler._calculate_distance(mark_price=mark_price) == expected
 
@@ -59,7 +59,7 @@ async def test_handle_when_distance_is_greater_than_trailing_distance(
         trailing_distance=trailing_distance,
         update_order=update_order_mock,
         trailing_step=trailing_step,
-        oco_handler=mock_oco_handler,
+        handler=mock_oco_handler,
     )
 
     await handler.handle(
@@ -92,7 +92,7 @@ async def test_handle_when_distance_is_less_than_trailing_distance(
         trailing_distance=trailing_distance,
         update_order=update_order_mock,
         trailing_step=trailing_step,
-        oco_handler=mock_oco_handler,
+        handler=mock_oco_handler,
     )
 
     await handler.handle(
@@ -114,7 +114,7 @@ async def test_handle_done_when_oco_handler_is_done(mock_oco_handler):
         trailing_distance=10.0,
         update_order=update_order_mock,
         trailing_step=1.0,
-        oco_handler=mock_oco_handler,
+        handler=mock_oco_handler,
     )
     handler.calculate_new_price = MagicMock()
 
