@@ -1,6 +1,6 @@
 import pytest
 
-from kucoin_futures_lib.handlers.fill import FillHandler
+from kucoin_futures_lib.handlers import FillHandler
 
 
 @pytest.mark.asyncio

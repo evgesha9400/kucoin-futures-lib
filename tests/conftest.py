@@ -72,6 +72,16 @@ def mock_entry_range_handler():
 
 
 @pytest.fixture
+def mock_fill_handler():
+    """Return a mock FillHandler."""
+    with patch(
+        "kucoin_futures_lib.websocket.FillHandler", autospec=True
+    ) as mock_fill:
+        mock_fill.return_value = mock_fill
+        yield mock_fill
+
+
+@pytest.fixture
 def mock_kucoinf():
     """Return a mock KucoinFutures client."""
     return KucoinFutures(

@@ -99,3 +99,12 @@ async def test_listen_for_entry(mock_entry_range_handler, mock_ws_client, test_k
     )
     mock_ws_client.subscribe.assert_called_once_with(mock_entry_range_handler.topic)
     mock_ws_client.unsubscribe.assert_called_once_with(mock_entry_range_handler.topic)
+
+
+@pytest.mark.asyncio
+async def test_listen_for_fill(mock_fill_handler, mock_ws_client, test_kucoinf):
+    order_id = "1234567890"
+    mock_fill_handler.done = AsyncMock()
+    await test_kucoinf.websocket.listen_for_fill(order_id=order_id, timeout=0.2)
+    mock_ws_client.subscribe.assert_called_once_with(mock_fill_handler.topic)
+    mock_ws_client.unsubscribe.assert_called_once_with(mock_fill_handler.topic)
