@@ -2,12 +2,12 @@
 
 import asyncio
 import logging
-from typing import Union, Callable, Awaitable, Optional
+from typing import Union, Callable, Awaitable, Optional, Literal, List
 
 from kucoin_futures.client import WsToken
 from kucoin_futures.ws_client import KucoinFuturesWsClient
 
-from kucoin_futures_lib.handlers import OcoHandler, EntryRangeHandler, FillHandler, HandlerABC
+from kucoin_futures_lib.handlers import OcoHandler, EntryRangeHandler, MessageHandler, HandlerABC
 
 logger = logging.getLogger(__name__)
 
@@ -24,8 +24,7 @@ class KucoinFuturesWebsocket:
         """Subscribe to the WebSocket topic.
         :param handler: Handler object
         :param timeout: Timeout in seconds. Default is 12 hours
-        :raises asyncio.TimeoutError: If the timeout is reached
-        """
+        :raises asyncio.TimeoutError: If the timeout is reached"""
         ws_client = await KucoinFuturesWsClient.create(
             loop=None,
             client=self.token,
@@ -88,14 +87,21 @@ class KucoinFuturesWebsocket:
         await self.subscribe(handler, None)
 
 
-    async def listen_for_fill(
+    async def listen_for_message(
         self,
         order_id: str,
+        message_type: List[Literal["open", "match", "filled", "canceled", "update"]],
         timeout: float = 60 * 60 * 12,
-    ) -> None:
-        """Listen for the order to be filled.
+    ) -> Literal["open", "match", "filled", "canceled", "update"]:
+        """Listen for the order message.
         :param order_id: Order ID
-        :param timeout: timeout in seconds. Default is 12 hours
+        :param message_type: The message types to listen for.
+        :param timeout: timeout in seconds. Default is 12 hours.
+        :return: The message type received.
         """
-        handler = FillHandler(order_id=order_id)
+        handler = MessageHandler(
+            order_id=order_id,
+            message_type=message_type,
+        )
         await self.subscribe(handler, timeout)
+        return handler.received_message
