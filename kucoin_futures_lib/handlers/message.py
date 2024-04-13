@@ -13,14 +13,17 @@ class MessageHandler(HandlerABC):
     def __init__(
         self,
         order_id: str,
+        order_status: Optional[Literal["match", "open", "done"]] = None,
         message_type: Optional[List[Literal["open", "match", "filled", "canceled", "update"]]] = None,
     ):
         """The handler will stop listening when any of the message_type is received.
+        If both order_status and message_type are None, the handler will react to the first message received for the order.
         :param order_id: The order ID to listen for.
         :param message_type: The message type to listen for. Default is None."""
 
         self.order_id = order_id
         self.message_type = message_type
+        self.order_status = order_status
         self.received_message = None
         self._reached = asyncio.Event()
         self._topic = "/contractMarket/tradeOrders"
@@ -55,8 +58,12 @@ class MessageHandler(HandlerABC):
         trade_order = msg.get("data", {})
         trade_order_id = trade_order.get("orderId", "")
         message_type = trade_order.get("type", "")
+        status = trade_order.get("status", "")
 
-        if trade_order_id == self.order_id and message_type in self.message_type:
-            logger.info("Order %s received %s", self.order_id, message_type)
-            self.received_message = message_type
-            self._reached.set()
+        if trade_order_id == self.order_id:
+            status_match = self.order_status is None or status in self.order_status
+            message_match = self.message_type is None or message_type in self.message_type
+            if status_match and message_match:
+                logger.info("Order %s is %s", self.order_id, message_type)
+                self.received_message = message_type
+                self._reached.set()
