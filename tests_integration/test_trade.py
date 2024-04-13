@@ -100,7 +100,7 @@ def test_get_position_list(kucoinf_real):
 
 
 def test_get_order_list(kucoinf_real):
-    order_list = kucoinf_real.trade.client.get_order_list(status="done")
+    order_list = kucoinf_real.trade.client.get_order_list(status="active")
     logger.info(f"order_list:\n{json.dumps(order_list, indent=4)}")
     """
     {
@@ -210,6 +210,14 @@ def test_get_open_order_details(kucoinf_real):
         "settleCurrency": "USDT"
     }
     """
+
+
+def test_get_recent_fill_list(kucoinf_real):
+    fill_list = kucoinf_real.trade.client.get_recent_fills()
+    for fill in fill_list:
+        if fill["orderId"] == "168410979212742656":
+            logger.info(f"fill:\n{json.dumps(fill, indent=4)}")
+    # logger.info(f"fill_list:\n{json.dumps(fill_list, indent=4)}")
 
 
 def test_get_open_stop_order(kucoinf_real):
