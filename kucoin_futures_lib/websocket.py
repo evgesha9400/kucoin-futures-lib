@@ -2,7 +2,7 @@
 
 import asyncio
 import logging
-from typing import Union, Callable, Awaitable, Optional, Literal, List
+from typing import Union, Callable, Awaitable, Optional, Literal, List, Dict
 
 from kucoin_futures.client import WsToken
 from kucoin_futures.ws_client import KucoinFuturesWsClient
@@ -90,17 +90,20 @@ class KucoinFuturesWebsocket:
     async def listen_for_message(
         self,
         order_id: str,
-        message_type: List[Literal["open", "match", "filled", "canceled", "update"]],
+        message_type: List[Literal["open", "match", "filled", "canceled", "update"]] = None,
+        order_status: List[Literal["match", "open", "done"]] = None,
         timeout: float = 60 * 60 * 12,
-    ) -> Literal["open", "match", "filled", "canceled", "update"]:
+    ) -> Dict:
         """Listen for the order message.
         :param order_id: Order ID
         :param message_type: The message types to listen for.
+        :param order_status: The order status to listen for.
         :param timeout: timeout in seconds. Default is 12 hours.
         :return: The message type received.
         """
         handler = MessageHandler(
             order_id=order_id,
+            order_status=order_status,
             message_type=message_type,
         )
         await self.subscribe(handler, timeout)

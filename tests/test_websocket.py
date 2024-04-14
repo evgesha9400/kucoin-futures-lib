@@ -105,8 +105,17 @@ async def test_listen_for_entry(mock_entry_range_handler, mock_ws_client, test_k
 async def test_listen_for_message(mock_message_handler, mock_ws_client, test_kucoinf):
     order_id = "1234567890"
     mock_message_handler.done = AsyncMock()
-    mock_message_handler.received_message = "filled"
-    msg = await test_kucoinf.websocket.listen_for_message(order_id=order_id, message_type=["filled", "canceled"], timeout=0.2)
+    message = {
+            "data": {
+                "orderId": order_id,
+                "type": "filled",
+                "status": "done",
+            }
+        }
+    mock_message_handler.received_message = message
+    msg = await test_kucoinf.websocket.listen_for_message(
+        order_id=order_id, message_type=["filled", "canceled"], timeout=0.2
+    )
     mock_ws_client.subscribe.assert_called_once_with(mock_message_handler.topic)
     mock_ws_client.unsubscribe.assert_called_once_with(mock_message_handler.topic)
-    assert msg == "filled"
+    assert msg == message

@@ -9,14 +9,15 @@ logger = logging.getLogger(__name__)
 
 
 class MessageHandler(HandlerABC):
-
     def __init__(
         self,
         order_id: str,
         order_status: Optional[Literal["match", "open", "done"]] = None,
-        message_type: Optional[List[Literal["open", "match", "filled", "canceled", "update"]]] = None,
+        message_type: Optional[
+            List[Literal["open", "match", "filled", "canceled", "update"]]
+        ] = None,
     ):
-        """The handler will stop listening when any of the message_type is received.
+        """The handler will stop listening when any of the message_type is received and order_status is received.
         If both order_status and message_type are None, the handler will react to the first message received for the order.
         :param order_id: The order ID to listen for.
         :param message_type: The message type to listen for. Default is None."""
@@ -29,7 +30,7 @@ class MessageHandler(HandlerABC):
         self._topic = "/contractMarket/tradeOrders"
 
     def __repr__(self):
-        return f"MessageHandler(order_id='{self.order_id}', message_type={self.message_type})"
+        return f"MessageHandler(order_id='{self.order_id}', order_status={self.order_status}, message_type={self.message_type})"
 
     @property
     def topic(self) -> str:
@@ -46,7 +47,6 @@ class MessageHandler(HandlerABC):
         """Return the done status for the handler."""
         return self._reached
 
-
     async def handle(self, msg: Dict):
         """Handle the trade order message from
         :param msg: The trade order message.
@@ -62,8 +62,15 @@ class MessageHandler(HandlerABC):
 
         if trade_order_id == self.order_id:
             status_match = self.order_status is None or status in self.order_status
-            message_match = self.message_type is None or message_type in self.message_type
+            message_match = (
+                self.message_type is None or message_type in self.message_type
+            )
             if status_match and message_match:
-                logger.info("Order %s is %s", self.order_id, message_type)
-                self.received_message = message_type
+                logger.info(
+                    "Handler done for order %s. Message type: %s, order status: %s",
+                    trade_order_id,
+                    message_type,
+                    status
+                )
+                self.received_message = msg
                 self._reached.set()
