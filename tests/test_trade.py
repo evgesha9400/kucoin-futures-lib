@@ -369,6 +369,7 @@ def test_create_stop_loss_limit(test_kucoinf):
         stopPrice="1000",
         timeInForce="GTC",
         closeOrder=True,
+        reduceOnly=False,
         size=None,
         lever=None,
     )
@@ -391,6 +392,8 @@ def test_create_stop_loss_stop(test_kucoinf):
         timeInForce="GTC",
         closeOrder=True,
         lever=None,
+        reduceOnly=False,
+        size=None,
     )
     assert order_id == "12345689"
 
@@ -412,13 +415,16 @@ async def test_update_stop_loss_stop(test_kucoinf):
                 "timeInForce": "GTC",
                 "closeOrder": True,
                 "leverage": 1,
+                "reduceOnly": True,
+                "size": 2,
             }
         ],
     }
 
-    await test_kucoinf.trade.update_stop_loss_stop_price(
+    await test_kucoinf.trade.update_stop_loss_stop(
         order_id="12345689",
         sl_price="70000",
+        reduce_amount=1,
     )
 
     test_kucoinf.trade.client.cancel_order.assert_called_once_with("12345689")
@@ -430,7 +436,9 @@ async def test_update_stop_loss_stop(test_kucoinf):
         stopPriceType="TP",
         stopPrice="70000",
         timeInForce="GTC",
-        closeOrder=True,
+        closeOrder=False,
+        reduceOnly=True,
+        size='1'
     )
 
 

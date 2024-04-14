@@ -263,11 +263,13 @@ class KucoinFuturesTrade:
         )
         return response["orderId"]
 
-    async def update_stop_loss_stop_price(self, order_id: str, sl_price: float) -> None:
+    async def update_stop_loss_stop(self, order_id: str, sl_price: float, reduce_amount: Optional[int] = None) -> str:
         """Update the stop loss order price.
         https://www.kucoin.com/docs/rest/futures-trading/orders/update-order
         :param order_id: The order id of the stop loss order
         :param sl_price: The new stop loss price
+        :param reduce_amount: The amount to reduce the position by
+        :return: The order id of the updated stop loss order
         """
         orders = self.get_open_stop_orders()
         order = next((o for o in orders if o["id"] == order_id), None)
@@ -275,12 +277,20 @@ class KucoinFuturesTrade:
             raise ValueError(f"Order {order_id} not found.")
         self.cancel_order(order_id)
 
+        if reduce_amount:
+            close_order = False
+            reduce_only = True
+            size = str(reduce_amount)
+        else:
+            close_order = order["closeOrder"]
+            reduce_only = order["reduceOnly"]
+            size = order["size"]
+
         instrument = order["symbol"]
         side = order["side"]
         stop = order["stop"]
         stop_price_type = order["stopPriceType"]
         time_in_force = order["timeInForce"]
-        close_order = order["closeOrder"]
         leverage = str(order["leverage"])
         price = str(sl_price)
         response = self.client.create_market_order(
@@ -292,6 +302,8 @@ class KucoinFuturesTrade:
             stopPrice=price,
             timeInForce=time_in_force,
             closeOrder=close_order,
+            reduceOnly=reduce_only,
+            size=size,
         )
 
         logger.info("Stop loss (stop) order %s updated to %s", order_id, sl_price)
