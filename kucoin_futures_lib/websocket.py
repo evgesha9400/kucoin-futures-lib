@@ -42,7 +42,7 @@ class KucoinFuturesWebsocket:
             handler.done.set()
             raise asyncio.TimeoutError(f"Timeout reached for {handler}")
         finally:
-            logger.info("Unsubscribing from %s", handler.topic)
+            logger.info("Unsubscribing %s", handler)
             # noinspection PyAsyncCall
             asyncio.create_task(ws_client.unsubscribe(handler.topic))
 
@@ -95,6 +95,7 @@ class KucoinFuturesWebsocket:
         timeout: float = 60 * 60 * 12,
     ) -> Dict:
         """Listen for the order message.
+        https://www.kucoin.com/docs/websocket/futures-trading/private-channels/trade-orders
         :param order_id: Order ID
         :param message_type: The message types to listen for.
         :param order_status: The order status to listen for.

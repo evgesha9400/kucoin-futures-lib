@@ -118,9 +118,14 @@ class KucoinFuturesTrade:
         """Create a take profit order using limit order.
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         """
-        close_order = False if reduce_amount else True
-        reduce_only = True if reduce_amount else False
-        size = str(reduce_amount) if reduce_amount else None
+        if reduce_amount:
+            close_order = False
+            reduce_only = True
+            size = str(reduce_amount)
+        else:
+            close_order = True
+            reduce_only = False
+            size = None
 
         response = self.client.create_limit_order(
             symbol=instrument,
@@ -148,9 +153,15 @@ class KucoinFuturesTrade:
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         """
         side, stop = ("sell", "up") if entry_side == "buy" else ("buy", "down")
-        close_order = False if reduce_amount else True
-        reduce_only = True if reduce_amount else False
-        size = str(reduce_amount) if reduce_amount else None
+
+        if reduce_amount:
+            close_order = False
+            reduce_only = True
+            size = str(reduce_amount)
+        else:
+            close_order = True
+            reduce_only = False
+            size = None
 
         response = self.client.create_market_order(
             symbol=instrument,
@@ -174,15 +185,26 @@ class KucoinFuturesTrade:
         instrument: str,
         entry_side: str,
         sl_price: float,
+        reduce_amount: Optional[int] = None,
     ) -> str:
         """Create stop loss order using stop market order.
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         :param instrument: Instrument symbol
         :param entry_side: Entry order side (buy or sell)
         :param sl_price: Take profit price
+        :param reduce_amount: The amount to reduce the position by
         :return: The order id of the stop loss order
         """
         side, stop = ("sell", "down") if entry_side == "buy" else ("buy", "up")
+        if reduce_amount:
+            close_order = False
+            reduce_only = True
+            size = str(reduce_amount)
+        else:
+            close_order = True
+            reduce_only = False
+            size = None
+
         response = self.client.create_market_order(
             symbol=instrument,
             side=side,
@@ -191,7 +213,9 @@ class KucoinFuturesTrade:
             stopPriceType="TP",
             stopPrice=str(sl_price),
             timeInForce="GTC",
-            closeOrder=True,
+            closeOrder=close_order,
+            reduceOnly=reduce_only,
+            size=size,
         )
         logger.info("Stop loss order (stop) created for %s at %s", instrument, sl_price)
         return response["orderId"]
@@ -201,15 +225,26 @@ class KucoinFuturesTrade:
         instrument: str,
         entry_side: str,
         sl_price: float,
+        reduce_amount: Optional[int] = None,
     ) -> str:
         """Create stop loss order using stop limit order.
         https://www.kucoin.com/docs/rest/futures-trading/orders/place-order
         :param instrument: Instrument symbol
         :param entry_side: Entry order side (buy or sell)
         :param sl_price: Take profit price
+        :param reduce_amount: The amount to reduce the position by
         :return: The order id of the stop loss order
         """
         side, stop = ("sell", "down") if entry_side == "buy" else ("buy", "up")
+        if reduce_amount:
+            close_order = False
+            reduce_only = True
+            size = str(reduce_amount)
+        else:
+            close_order = True
+            reduce_only = False
+            size = None
+
         response = self.client.create_limit_order(
             symbol=instrument,
             side=side,
@@ -218,9 +253,10 @@ class KucoinFuturesTrade:
             price=str(sl_price),
             stopPrice=str(sl_price),
             timeInForce="GTC",
-            closeOrder=True,
-            size=None,
             lever=None,
+            closeOrder=close_order,
+            size=size,
+            reduceOnly=reduce_only,
         )
         logger.info(
             "Stop loss order (limit) created for %s at %s", instrument, sl_price
