@@ -11,6 +11,8 @@ from kucoin_futures_lib.kucoinf import (
     KucoinFuturesWebsocket,
     KucoinFutures,
 )
+from kucoin_futures_lib.utils import retriable
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -100,6 +102,7 @@ def test_kucoinf(
         api_passphrase="test_api_key",
         api_key="test_secret_key",
         api_secret="test_passphrase",
+        retriable=retriable(retries=3, exceptions=(Exception,), backoff_base=2.0, initial_backoff=0.01),
     )
     kucoinf.user.client = mock_user_client
     kucoinf.trade.client = mock_trade_client

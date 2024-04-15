@@ -1,7 +1,7 @@
 """Kucoin Futures user module."""
 
 import logging
-from typing import Optional
+from typing import Optional, Callable
 
 from kucoin_futures.client import User
 
@@ -11,9 +11,11 @@ logger = logging.getLogger(__name__)
 class KucoinFuturesUser:
     """Kucoin Futures user wrapper class."""
 
-    def __init__(self, client: User = None, currency: str = "USDT"):
+    def __init__(self, client: User = None, currency: str = "USDT", retriable: Optional[Callable] = None):
         self.client = client
         self.currency = currency
+        if retriable:
+            self.get_account_overview = retriable(self.get_account_overview)
 
     def get_account_overview(self, currency: Optional[str] = None) -> dict:
         """Get the account overview.

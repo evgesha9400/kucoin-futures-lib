@@ -1,4 +1,5 @@
 import logging
+from typing import Callable
 
 from kucoin_futures.client import WsToken, User, Trade, Market
 
@@ -12,40 +13,40 @@ logger = logging.getLogger(__name__)
 
 
 def initialize_kucoinf(
-    api_key: str, api_secret: str, api_passphrase: str
+    api_key: str, api_secret: str, api_passphrase: str, retriable: Callable = None
 ) -> KucoinFutures:
     """Initialize the Kucoin Futures client using API credentials."""
-    user = initialize_user(api_key, api_secret, api_passphrase)
-    trade = initialize_trade(api_key, api_secret, api_passphrase)
-    market = initialize_market(api_key, api_secret, api_passphrase)
-    websocket = initialize_websocket(api_key, api_secret, api_passphrase)
+    user = initialize_user(api_key, api_secret, api_passphrase, retriable)
+    trade = initialize_trade(api_key, api_secret, api_passphrase, retriable)
+    market = initialize_market(api_key, api_secret, api_passphrase, retriable)
+    websocket = initialize_websocket(api_key, api_secret, api_passphrase, retriable)
     kucoinf = KucoinFutures(user=user, trade=trade, market=market, websocket=websocket)
     logger.info("Kucoin Futures client initialized.")
     return kucoinf
 
 
 def initialize_user(
-    api_key: str, api_secret: str, api_passphrase: str
+    api_key: str, api_secret: str, api_passphrase: str, retriable: Callable = None
 ) -> "KucoinFuturesUser":
     """Initialize the Kucoin Futures User client using API credentials."""
     user = User(key=api_key, secret=api_secret, passphrase=api_passphrase)
-    return KucoinFuturesUser(client=user)
+    return KucoinFuturesUser(client=user, retriable=retriable)
 
 
 def initialize_market(
-    api_key: str, api_secret: str, api_passphrase: str
+    api_key: str, api_secret: str, api_passphrase: str, retriable: Callable = None
 ) -> KucoinFuturesMarket:
     """Initialize the Kucoin Futures Market client using API credentials."""
     market = Market(key=api_key, secret=api_secret, passphrase=api_passphrase)
-    return KucoinFuturesMarket(client=market)
+    return KucoinFuturesMarket(client=market, retriable=retriable)
 
 
 def initialize_trade(
-    api_key: str, api_secret: str, api_passphrase: str
+    api_key: str, api_secret: str, api_passphrase: str, retriable: Callable = None
 ) -> KucoinFuturesTrade:
     """Initialize the Kucoin Futures Trade client using API credentials."""
     trade = Trade(key=api_key, secret=api_secret, passphrase=api_passphrase)
-    return KucoinFuturesTrade(client=trade)
+    return KucoinFuturesTrade(client=trade, retriable=retriable)
 
 
 def initialize_websocket(

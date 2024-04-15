@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+from typing import Callable, Optional
 
 from kucoin_futures.client import Market
 
@@ -14,9 +15,15 @@ class KucoinFuturesMarket:
     def __init__(
         self,
         client: Market = None,
+        retriable: Optional[Callable] = None,
     ):
         """Initialize the Kucoin Futures client."""
         self.client = client
+        if retriable:
+            self.get_current_price = retriable(self.get_current_price)
+            self.get_tick_size = retriable(self.get_tick_size)
+            self.get_multiplier = retriable(self.get_multiplier)
+
 
     def get_current_price(self, instrument: str) -> float:
         """Get the current price of an instrument.

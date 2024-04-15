@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 from collections import namedtuple
-from typing import List, Dict, Any, Optional, Literal
+from typing import List, Dict, Any, Optional, Literal, Callable
 
 from kucoin_futures.client import Trade
 
@@ -20,10 +20,24 @@ class KucoinFuturesTrade:
         self,
         client: Trade = None,
         leverage: int = 2,
+        retriable: Optional[Callable] = None,
     ):
         """Initialize the Kucoin Futures client."""
         self.client = client
         self.leverage = leverage
+        if retriable:
+            self.get_open_limit_orders = retriable(self.get_open_limit_orders)
+            self.get_open_stop_orders = retriable(self.get_open_stop_orders)
+            self.get_order_history = retriable(self.get_order_history)
+            self.cancel_order = retriable(self.cancel_order)
+            self.create_take_profit_limit = retriable(self.create_take_profit_limit)
+            self.create_take_profit_stop = retriable(self.create_take_profit_stop)
+            self.create_stop_loss_stop = retriable(self.create_stop_loss_stop)
+            self.update_stop_loss_stop = retriable(self.update_stop_loss_stop)
+            self.create_stop_loss_limit = retriable(self.create_stop_loss_limit)
+            self.create_market_order = retriable(self.create_market_order)
+            self.create_limit_order = retriable(self.create_limit_order)
+
 
     def get_open_limit_orders(
         self,
