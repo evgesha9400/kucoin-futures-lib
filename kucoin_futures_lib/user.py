@@ -28,4 +28,4 @@ class KucoinFuturesUser:
         :return: The account balance"""
         logger.debug("Getting account balance")
         account_overview = self.get_account_overview(currency=currency)
-        return float(account_overview["accountEquity"])
+        return float(account_overview["availableBalance"])

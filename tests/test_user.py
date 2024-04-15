@@ -5,9 +5,9 @@ logger = logging.getLogger(__name__)
 
 def test_get_balance(test_kucoinf):
     test_kucoinf.user.client.get_account_overview.return_value = {
-        "accountEquity": 99.8999305281,
+        "accountEquity": 199.8999305281,
         "unrealisedPNL": 0,
-        "marginBalance": 99.8999305281,
+        "marginBalance": 199.8999305281,
         "positionMargin": 0,
         "orderMargin": 0,
         "frozenFunds": 0,
