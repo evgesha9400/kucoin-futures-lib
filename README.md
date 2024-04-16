@@ -1,5 +1,10 @@
 # Kucoin Futures Library
 
+## Installation
+```bash
+pip install kucoin-futures-lib
+```
+
 ## Class Structure
 ```mermaid
 classDiagram
