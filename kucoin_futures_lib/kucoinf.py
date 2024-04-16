@@ -42,9 +42,9 @@ class KucoinFutures:
         take_profit_type: Literal["limit", "stop"] = "limit",
         stop_loss_type: Literal["limit", "stop"] = "stop",
         leverage: Optional[int] = None,
-        enable_oco: bool = True,
+        enable_oco: bool = False,
     ) -> str:
-        """Create order with stop loss and take profit."""
+        """Create market order with stop loss and take profit."""
         logger.debug("Creating order: %s %s %s %s", instrument, side, size, price)
         entry_order_id = self.trade.create_order(
             instrument=instrument,
