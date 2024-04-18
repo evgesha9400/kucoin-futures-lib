@@ -22,6 +22,7 @@ class TrailingHandler(HandlerABC):
         trailing_step: float,
         handler: HandlerABC,
         update_order: Callable[[Any], Awaitable[None]],
+        tag: str = "",
     ):
         """Initialize the handler.
         :param instrument: instrument symbol
@@ -33,7 +34,11 @@ class TrailingHandler(HandlerABC):
         :param update_order: Function to update the stop loss order price
         :param trailing_step: The step to adjust the stop loss order price by.
         When None, the delta between distance and trailing distance is used.
+        :param tag: The tag to identify the handler.
         """
+        self._done = asyncio.Event()
+        self._topic = "/contract/instrument"
+
         self.instrument = instrument
         self.direction = direction
         self.sl_order_id = sl_order_id
@@ -42,11 +47,10 @@ class TrailingHandler(HandlerABC):
         self.trailing_step = trailing_step
         self.update_order = update_order
         self.external_handler = handler
-        self._done = asyncio.Event()
-        self._topic = "/contract/instrument"
+        self.tag = tag
 
     def __repr__(self):
-        return f"TrailingHandler({self.instrument}, sl_order_id={self.sl_order_id}, trailing_distance={self.trailing_distance}, trailing_step={self.trailing_step})"
+        return f"TrailingHandler('tag': {self.tag}, 'instrument': {self.instrument}, 'direction': {self.direction}, 'sl_order_id': {self.sl_order_id}, 'sl_order_price': {self.sl_order_price}, 'trailing_distance': {self.trailing_distance}, 'trailing_step': {self.trailing_step})"
 
     @property
     def topic(self) -> str:

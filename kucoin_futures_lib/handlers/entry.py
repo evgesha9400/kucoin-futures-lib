@@ -20,17 +20,27 @@ class EntryRangeHandler(HandlerABC):
         callback: Optional[
             Union[Callable[..., Any], Callable[..., Awaitable[Any]]]
         ] = None,
+        tag: str = "",
     ):
+        """Initialize the handler.
+        :param instrument: The instrument to listen for.
+        :param entry_high: The high price to listen for.
+        :param entry_low: The low price to listen for.
+        :param callback: The callback to call when the entry range is reached.
+        :param tag: The tag to identify the handler.
+        """
         assert entry_high > entry_low, "Entry high must be greater than entry low"
-        self.instrument = instrument
-        self.entry_low = entry_low
-        self.entry_high = entry_high
         self._callback = callback
         self._entered = asyncio.Event()
         self._topic = "/contractMarket/tickerV2"
 
+        self.instrument = instrument
+        self.entry_low = entry_low
+        self.entry_high = entry_high
+        self.tag = tag
+
     def __repr__(self):
-        return f"EntryRangeHandler('{self.instrument}', entry_high={self.entry_high}, entry_low={self.entry_low})"
+        return f"EntryRangeHandler('tag': {self.tag}, 'instrument': {self.instrument}, 'entry_high': {self.entry_high}, 'entry_low': {self.entry_low})"
 
     @property
     def done(self) -> asyncio.Event:

@@ -21,16 +21,25 @@ class OcoHandler(HandlerABC):
         market_order_id: str,
         instrument: str,
         cancel_order: Union[Callable[[str], None], Callable[[str], Awaitable[None]]],
+        tag: str = "",
     ):
+        """Initialize the handler.
+        :param limit_order_id: The limit order ID to listen for.
+        :param market_order_id: The market order ID to listen for.
+        :param instrument: The instrument to listen for.
+        :param cancel_order: The function to cancel the order.
+        :param tag: The tag to identify the handler.
+        """
         self.limit_order_id = limit_order_id
         self.market_order_id = market_order_id
         self.instrument = instrument
+        self.tag = tag
         self._canceled = asyncio.Event()
         self._cancel_order = cancel_order
         self._topic = "/contractMarket/tradeOrders"
 
     def __repr__(self):
-        return f"OcoHandler({self.instrument}, limit_order_id={self.limit_order_id}, market_order_id={self.market_order_id})"
+        return f"OcoHandler('tag': {self.tag}, 'instrument': {self.instrument}, 'limit_order_id': {self.limit_order_id}, 'market_order_id': {self.market_order_id})"
 
     @property
     def topic(self) -> str:

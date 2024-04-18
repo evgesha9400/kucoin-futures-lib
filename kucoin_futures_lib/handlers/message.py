@@ -16,21 +16,26 @@ class MessageHandler(HandlerABC):
         message_type: Optional[
             List[Literal["open", "match", "filled", "canceled", "update"]]
         ] = None,
+        tag: str = ""
     ):
         """The handler will stop listening when any of the message_type is received and order_status is received.
         If both order_status and message_type are None, the handler will react to the first message received for the order.
         :param order_id: The order ID to listen for.
-        :param message_type: The message type to listen for. Default is None."""
+        :param message_type: The message type to listen for. Default is None.
+        :param tag: The tag to identify the handler.
+        """
+
+        self._reached = asyncio.Event()
+        self._topic = "/contractMarket/tradeOrders"
 
         self.order_id = order_id
         self.message_type = message_type
         self.order_status = order_status
         self.received_message = None
-        self._reached = asyncio.Event()
-        self._topic = "/contractMarket/tradeOrders"
+        self.tag = tag
 
     def __repr__(self):
-        return f"MessageHandler(order_id='{self.order_id}', order_status={self.order_status}, message_type={self.message_type})"
+        return f"MessageHandler(tag={self.tag}, order_id={self.order_id}, message_type={self.message_type}, order_status={self.order_status})"
 
     @property
     def topic(self) -> str:
